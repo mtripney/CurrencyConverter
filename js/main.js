@@ -1,9 +1,11 @@
 import { requestOptions } from './headers';
-const ratesByBase = {};
 
-const fromSelect = document.querySelector('[name="from_currency"]');
-const toSelect = document.querySelector('[name="to_currency"]');
-const toAmount = document.querySelector('.to_amount');
+const form = document.querySelector('.main-form');
+const fromAmount = document.querySelector('[name="from-amount"]');
+const fromSelect = document.querySelector('[name="from-currency"]');
+const toSelect = document.querySelector('[name="to-currency"]');
+const toAmount = document.querySelector('.to-amount');
+const ratesByBase = {};
 
 const currencies = {
   USD: 'United States Dollar',
@@ -56,13 +58,15 @@ const convertRates = async (amount, from, to) => {
     // ... and store it for future use.
     ratesByBase[from] = rates;
   }
-  const convertedAmount = ratesByBase[from].rates[to] * amount;
-  toAmount.textContent = convertedAmount.toFixed(2);
+  return ratesByBase[from].rates[to] * amount;
 };
 
 const generateOptions = (options) =>
   Object.entries(options)
-    .map(([code, name]) => `<option value="${code}">${name}</option>`)
+    .map(
+      ([code, name]) =>
+        `<option value="${code}">${code} - ${name}</option>`
+    )
     .join('');
 
 const optionsHTML = generateOptions(currencies);
@@ -71,4 +75,21 @@ const optionsHTML = generateOptions(currencies);
 fromSelect.innerHTML = optionsHTML;
 toSelect.innerHTML = optionsHTML;
 
-convertRates(100, 'USD', 'GBP');
+const formatFinalAmount = (amount, currency) => {
+  return Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency,
+  }).format(amount);
+};
+
+const handleInput = async (e) => {
+  const rawAmount = await convertRates(
+    fromAmount.value,
+    fromSelect.value,
+    toSelect.value
+  );
+  toAmount.textContent = formatFinalAmount(rawAmount, toSelect.value);
+};
+
+// Listen for form inputs
+form.addEventListener('input', handleInput);
