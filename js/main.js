@@ -1,5 +1,10 @@
+import { requestOptions } from './headers';
+const baseCurrency = 'usd';
+
 const fromSelect = document.querySelector('[name="from_currency"]');
 const toSelect = document.querySelector('[name="to_currency"]');
+const endpoint =
+  'https://api.apilayer.com/exchangerates_data/convert?to=gbp&from=eur&amount=100';
 
 const currencies = {
   USD: 'United States Dollar',
@@ -36,6 +41,15 @@ const currencies = {
   TRY: 'Turkish Lira',
 };
 
+const fetchRates = async () => {
+  const res = await fetch(
+    `https://api.apilayer.com/exchangerates_data/latest?base=${baseCurrency}`,
+    requestOptions
+  );
+  const rates = await res.json();
+  console.log(rates);
+};
+
 const generateOptions = (options) =>
   Object.entries(options)
     .map(([code, name]) => `<option value="${code}">${name}</option>`)
@@ -46,3 +60,5 @@ const optionsHTML = generateOptions(currencies);
 // Populate the options elements
 fromSelect.innerHTML = optionsHTML;
 toSelect.innerHTML = optionsHTML;
+
+fetchRates();
