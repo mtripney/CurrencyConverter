@@ -1,5 +1,5 @@
-import { currencies } from './currencies';
-import { requestOptions } from './headers';
+import { currencies } from './currencies.js';
+import { requestOptions } from './headers.js';
 
 const form = document.querySelector('.main-form');
 const fromAmount = document.querySelector('[name="from-amount"]');
